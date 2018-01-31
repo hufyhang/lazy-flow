@@ -2,6 +2,7 @@ import LazyBase from './base';
 import LazyRange from './range';
 import LazyMap, { TMapTransformer } from './map';
 import LazyFilter, { TFilterCondition } from './filter';
+import LazyReduce, { TReduceFunc } from './reduce';
 
 const isArray = (o: any) => Object.prototype.toString.call(o) === '[object Array]';
 
@@ -35,6 +36,12 @@ export default class Lazy {
 
   range(x: number, y: number) {
     const instance = new LazyRange(x, y);
+    this.pushProcess(instance);
+    return this;
+  }
+
+  reduce(func: TReduceFunc, initialValue: any) {
+    const instance = new LazyReduce(func, initialValue);
     this.pushProcess(instance);
     return this;
   }
