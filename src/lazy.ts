@@ -1,5 +1,6 @@
 import LazyBase from './base';
 import LazyRange from './range';
+import LazyMap, { TMapTransformer } from './map';
 
 const isArray = (o: any) => Object.prototype.toString.call(o) === '[object Array]';
 
@@ -12,14 +13,18 @@ class Lazy {
   }
 
   private pushProcess(process: LazyBase) {
-    if (process.isIteratable() && this.prevIteratable) {
-      let proc = this.process[this.process.length - 1];
-      if (isArray(proc)) {
-        proc.push(process);
+    if (process.isIteratable()) {
+      if (this.prevIteratable) {
+        let proc = this.process[this.process.length - 1];
+        if (isArray(proc)) {
+          proc.push(process);
+        } else {
+          proc = [proc, process];
+        }
+        this.process[this.process.length - 1] = proc;
       } else {
-        proc = [proc, process];
+        this.process.push([process]);
       }
-      this.process[this.process.length - 1] = proc;
     } else {
       this.prevIteratable = false;
       this.process.push(process);
@@ -28,6 +33,12 @@ class Lazy {
 
   range(x: number, y: number) {
     const instance = new LazyRange(x, y);
+    this.pushProcess(instance);
+    return this;
+  }
+
+  map(trans: TMapTransformer) {
+    const instance = new LazyMap(trans);
     this.pushProcess(instance);
     return this;
   }
@@ -62,4 +73,4 @@ class Lazy {
 
 
 const lazy = new Lazy();
-console.log(lazy.range(1, 10).value());
+console.log(lazy.range(1, 10).map(i => i * 10).value());

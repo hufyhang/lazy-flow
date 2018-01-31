@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "build": "yarn tsc src/lazy.ts --outDir dist"
+  },
   "devDependencies": {
     "typescript": "^2.6.2"
   }
