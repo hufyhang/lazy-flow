@@ -9,9 +9,11 @@ const isArray = (o: any) => Object.prototype.toString.call(o) === '[object Array
 export default class Lazy {
   private process: any[];
   private prevIteratable: boolean;
+  private _result: any[] = [];
 
-  constructor() {
+  constructor(initialValue: any[] = []) {
     this.process = [];
+    this._result = initialValue;
   }
 
   private pushProcess(process: LazyBase) {
@@ -58,10 +60,16 @@ export default class Lazy {
     return this;
   }
 
-  value() {
-    let result: any;
+  take(boundry: number) {
+    const arr = this.value(boundry);
+    const lazy = new Lazy(arr);
+    return lazy;
+  }
 
-    this.process.forEach((process: LazyBase|LazyBase[]) => {
+  value(boundry: number) {
+    let result: any = this._result;
+
+    for (let process of this.process) {
       if (isArray(process)) {
         if (!isArray(result)) {
           throw new Error(`Cannot performance iterative processes on non-array type variable: ${ result }`);
@@ -69,7 +77,7 @@ export default class Lazy {
 
         const buffer: any[] = [];
         const temp = { accumulator: undefined };
-        result.forEach((item: any) => {
+        for (let item of result) {
           let passed = true;
           for (let proc of (process as LazyBase[])) {
             if (!proc.value(item, temp)) {
@@ -79,15 +87,18 @@ export default class Lazy {
             item = temp.accumulator;
           }
           if (passed) {
-            buffer.push(temp.accumulator)
+            buffer.push(temp.accumulator);
+            if (typeof boundry === 'number' && buffer.length >= boundry) {
+              break;
+            }
           }
-        });
+        }
         result = buffer;
 
       } else {
         result = (process as LazyBase).value(result);
       }
-    });
+    }
 
     return result;
   }
