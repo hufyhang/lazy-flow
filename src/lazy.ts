@@ -25,6 +25,7 @@ class Lazy {
       } else {
         this.process.push([process]);
       }
+      this.prevIteratable = true;
     } else {
       this.prevIteratable = false;
       this.process.push(process);
