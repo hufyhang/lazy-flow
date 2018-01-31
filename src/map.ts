@@ -1,4 +1,4 @@
-import LazyBase from './base';
+import LazyBase, { IBuffer } from './base';
 
 export type TMapTransformer = (item: any) => any;
 
@@ -11,9 +11,9 @@ export default class LazyMap extends LazyBase {
     this.transformer = transformer;
   }
 
-  value(item: any, buffer: any[]) {
+  value(item: any, buffer: IBuffer) {
     const result = true;
-    buffer.push(this.transformer(item));
+    buffer.accumulator = this.transformer(item);
     return result;
   }
 }

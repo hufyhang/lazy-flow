@@ -1,10 +1,11 @@
 import LazyBase from './base';
 import LazyRange from './range';
 import LazyMap, { TMapTransformer } from './map';
+import LazyFilter, { TFilterCondition } from './filter';
 
 const isArray = (o: any) => Object.prototype.toString.call(o) === '[object Array]';
 
-class Lazy {
+export default class Lazy {
   private process: any[];
   private prevIteratable: boolean;
 
@@ -44,6 +45,12 @@ class Lazy {
     return this;
   }
 
+  filter(condition: TFilterCondition) {
+    const instance = new LazyFilter(condition);
+    this.pushProcess(instance);
+    return this;
+  }
+
   value() {
     let result: any;
 
@@ -54,11 +61,18 @@ class Lazy {
         }
 
         const buffer: any[] = [];
+        const temp = { accumulator: undefined };
         result.forEach((item: any) => {
+          let passed = true;
           for (let proc of (process as LazyBase[])) {
-            if (!proc.value(item, buffer)) {
+            if (!proc.value(item, temp)) {
+              passed = false;
               break;
             }
+            item = temp.accumulator;
+          }
+          if (passed) {
+            buffer.push(temp.accumulator)
           }
         });
         result = buffer;
@@ -71,7 +85,3 @@ class Lazy {
     return result;
   }
 }
-
-
-const lazy = new Lazy();
-console.log(lazy.range(1, 10).map(i => i * 10).value());

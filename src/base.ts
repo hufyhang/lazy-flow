@@ -1,3 +1,7 @@
+export interface IBuffer {
+  accumulator: any;
+}
+
 export default abstract class LazyBase {
   protected iteratable: boolean;
 
@@ -5,5 +9,5 @@ export default abstract class LazyBase {
     return this.iteratable;
   }
 
-  public value(item: any, buffer?: any[]): any {};
+  public value(item: any, buffer?: IBuffer): any {};
 }
