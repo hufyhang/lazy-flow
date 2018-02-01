@@ -8,6 +8,8 @@ import LazyTake from './take';
 import LazyChunck from './chunck';
 import BoundryObject from './boundry_object';
 import LazyDo from './do';
+import LazyOf from './of';
+import LazyFrom from './from';
 
 const isArray = (o: any) => Object.prototype.toString.call(o) === '[object Array]';
 
@@ -52,6 +54,26 @@ class Lazy {
       this.prevIteratable = false;
       this.process.push(process);
     }
+  }
+
+  /**
+   * 将一个数组放入到lazy flow中并返回lazy flow。
+   * @param list 需要放入的数组
+   */
+  of(list: any[]) {
+    const instance = new LazyOf(list);
+    this.pushProcess(instance);
+    return this;
+  }
+
+  /**
+   * 将类数组对象转化成数组并放入到lazy flow中。
+   * @param arrayList 类数组对象
+   */
+  from(arrayList: any) {
+    const instance = new LazyFrom(arrayList);
+    this.pushProcess(instance);
+    return this;
   }
 
   /**

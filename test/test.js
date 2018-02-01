@@ -89,4 +89,20 @@ describe('Lazy Flow', () => {
       assert.equal(result, 15);
     });
   });
+
+  describe('#of', () => {
+    it('应当将数组放置到lazy flow中', () => {
+      equal(lazyFlow().of([1, 2, 3]).value(), [1, 2, 3]);
+    });
+  });
+
+  describe('#from', () => {
+    it('应将类数组转化成数组', () => {
+      function foo() {
+        return lazyFlow().from(arguments).value();
+      }
+
+      equal(foo(1, 2, 3), [1, 2, 3]);
+    });
+  });
 });
