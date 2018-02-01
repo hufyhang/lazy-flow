@@ -167,5 +167,6 @@ class Lazy {
 }
 
 export default function(initialValue?: any[]) {
+  initialValue = isArray(initialValue) ? initialValue : [initialValue];
   return new Lazy(initialValue);
 };
