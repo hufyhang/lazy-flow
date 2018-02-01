@@ -78,6 +78,16 @@ class Lazy {
     return this;
   }
 
+  next(value: any|any[]) {
+    let val = value;
+    if (!isArray(val)) {
+      val = [val];
+    }
+
+    this._result = val;
+    return this.value();
+  }
+
   value(processSequence: any[] = this.process, boundry: number|null = null, result: any = this._result) {
     for (let process of processSequence) {
       if (process instanceof BoundryObject) {
