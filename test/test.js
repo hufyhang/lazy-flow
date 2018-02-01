@@ -59,5 +59,12 @@ describe('Lazy Flow', () => {
       const arr = lazyFlow(o).pluck('name').map(x => x.toUpperCase()).value();
       equal(arr, ['FOO', 'BAR']);
     })
-  })
+  });
+
+  describe('#chunck', () => {
+    it('应当拆分数组', () => {
+      let arr = lazyFlow().range(1, 6).chunck(2).value();
+      equal(arr, [[1, 2], [3, 4], [5, 6]]);
+    });
+  });
 });

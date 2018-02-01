@@ -1,13 +1,24 @@
-import LazyBase from './base';
+import LazyBase, { IBuffer } from './base';
 import LazyRange from './range';
 import LazyMap, { TMapTransformer } from './map';
 import LazyFilter, { TFilterCondition } from './filter';
 import LazyReduce, { TReduceFunc } from './reduce';
 import LazyPluck from './pluck';
 import LazyTake from './take';
+import LazyChunck from './chunck';
 import BoundryObject from './boundry_object';
 
 const isArray = (o: any) => Object.prototype.toString.call(o) === '[object Array]';
+
+const securePush = (buffer: any[], item: any, boundry: number|null) => {
+  if (typeof boundry === 'number' && buffer.length + 1 > boundry) {
+    return false;
+  }
+
+  buffer.push(item);
+
+  return true;
+};
 
 class Lazy {
   private process: any[];
@@ -49,6 +60,12 @@ class Lazy {
    */
   range(x: number, y: number) {
     const instance = new LazyRange(x, y);
+    this.pushProcess(instance);
+    return this;
+  }
+
+  chunck(size: number) {
+    const instance = new LazyChunck(size);
     this.pushProcess(instance);
     return this;
   }
@@ -138,27 +155,44 @@ class Lazy {
         }
 
         const buffer: any[] = [];
-        const temp = { accumulator: undefined };
+        const temp: IBuffer = {
+          accumulator: undefined,
+          currentOutput: undefined
+        };
         for (let item of result) {
           let passed = true;
+          if (typeof boundry === 'number' && buffer.length > boundry) {
+            break;
+          }
           for (let proc of (process as LazyBase[])) {
-            if (!proc.value(item, temp)) {
+            if (!proc.value(item, temp, result)) {
               passed = false;
               break;
             }
             item = temp.accumulator;
           }
           if (passed) {
-            buffer.push(temp.accumulator);
-            if (typeof boundry === 'number' && buffer.length >= boundry) {
-              break;
+            const output = isArray(temp.accumulator) ? (temp.accumulator as any).slice(0) : temp.accumulator;
+            if (temp.overrideLast) {
+              if (buffer.length === 0) {
+                if (!securePush(buffer, output, boundry)) {
+                  break;
+                }
+              } else {
+                buffer[buffer.length - 1] = output;
+              }
+            } else {
+              if (!securePush(buffer, output, boundry)) {
+                break;
+              }
             }
+            temp.currentOutput = buffer;
           }
         }
         result = buffer;
 
       } else {
-        result = (process as LazyBase).value(result);
+        result = (process as LazyBase).value(result, { accumulator: undefined, currentOutput: undefined }, result);
       }
     }
 

@@ -1,5 +1,7 @@
 export interface IBuffer {
   accumulator: any;
+  currentOutput: any;
+  overrideLast?: boolean;
 }
 
 export default abstract class LazyBase {
@@ -14,5 +16,5 @@ export default abstract class LazyBase {
     return this.boundry === true;
   }
 
-  public value(item: any, buffer?: IBuffer): any {};
+  public value(item: any, buffer?: IBuffer, result?: any[]|any): any {};
 }
