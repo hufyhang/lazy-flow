@@ -4,9 +4,11 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "yarn tsc src/lazy.ts --outDir dist --target es5"
+    "build": "yarn tsc src/lazy.ts --outDir dist --target es5",
+    "test": "yarn run build&&yarn mocha test"
   },
   "devDependencies": {
+    "mocha": "^5.0.0",
     "typescript": "^2.6.2"
   }
 }
