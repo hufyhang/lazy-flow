@@ -7,6 +7,7 @@ import LazyPluck from './pluck';
 import LazyTake from './take';
 import LazyChunck from './chunck';
 import BoundryObject from './boundry_object';
+import LazyDo from './do';
 
 const isArray = (o: any) => Object.prototype.toString.call(o) === '[object Array]';
 
@@ -64,6 +65,20 @@ class Lazy {
     return this;
   }
 
+  /**
+   * 针对数组中每个元素执行含有副作用的函数。
+   * @param func 回调函数。
+   */
+  do(func: (value: any) => void) {
+    const instance = new LazyDo(func);
+    this.pushProcess(instance);
+    return this;
+  }
+
+  /**
+   * 将数组分成容量为size的数组集。
+   * @param size 每个数组的容量。
+   */
   chunck(size: number) {
     const instance = new LazyChunck(size);
     this.pushProcess(instance);

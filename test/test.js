@@ -81,4 +81,12 @@ describe('Lazy Flow', () => {
 
     });
   });
+
+  describe('#do', () => {
+    it('应当对数组中的每个元素执行含有副作用的回调函数', () => {
+      let result = 0;
+      lazyFlow().range(1, 5).do(x => result += x).value();
+      assert.equal(result, 15);
+    });
+  });
 });
