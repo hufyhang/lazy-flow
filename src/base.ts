@@ -5,7 +5,10 @@ export interface IBuffer {
 }
 
 export default abstract class LazyBase {
+  // 表示是否需要对数组进行遍历
   protected iteratable: boolean;
+
+  // 表示是否需要设置计算次数上限
   protected boundry: boolean;
 
   public isIteratable(): boolean {

@@ -65,6 +65,20 @@ describe('Lazy Flow', () => {
     it('应当拆分数组', () => {
       let arr = lazyFlow().range(1, 6).chunck(2).value();
       equal(arr, [[1, 2], [3, 4], [5, 6]]);
+
+      const flow$ = lazyFlow(lazyFlow().range(1, 10).value()).chunck(2).take(3).map(x => {
+        const a = x[0] || 0;
+        const b = x[1] || 0;
+        return a + b;
+      });
+
+      arr = flow$.value();
+      equal(arr, [3, 7, 11]);
+
+      arr = flow$.next([10, 20, 30]);
+      equal(arr, [30, 30]);
+
+
     });
   });
 });
