@@ -45,4 +45,19 @@ describe('Lazy Flow', () => {
       equal(arr, [20, 40, 60]);
     });
   });
+
+  describe('#pluck', () => {
+    it('应当从对象中取出相应的键值', () => {
+      const o = [{
+        id: 1,
+        name: 'foo'
+      }, {
+        id: 2,
+        name: 'bar'
+      }];
+
+      const arr = lazyFlow(o).pluck('name').map(x => x.toUpperCase()).value();
+      equal(arr, ['FOO', 'BAR']);
+    })
+  })
 });
