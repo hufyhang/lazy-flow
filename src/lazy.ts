@@ -4,7 +4,7 @@ import LazyMap, { TMapTransformer } from './map';
 import LazyFilter, { TFilterCondition } from './filter';
 import LazyReduce, { TReduceFunc } from './reduce';
 import LazyPluck from './pluck';
-import LazyTake from './take';
+import LazyTake, { LazyTakeSimple } from './take';
 import LazyChunck from './chunck';
 import BoundryObject from './boundry_object';
 import LazyDo from './do';
@@ -23,7 +23,7 @@ const securePush = (buffer: any[], item: any, boundry: number|null) => {
   return true;
 };
 
-class Lazy {
+export class Lazy {
   private process: any[];
   private prevIteratable: boolean;
   private _result: any[] = [];
@@ -153,8 +153,18 @@ class Lazy {
    * @param boundry 所需取出的数量。
    */
   take(boundry: number) {
-    const instance = new LazyTake(this.process, boundry);
+    let instance;
+
+    if (this.process.length === 0
+        || !(this.process[this.process.length - 1] instanceof BoundryObject)
+        || !this.process[this.process.length - 1].isIteratable()
+      ) {
+      instance = new LazyTakeSimple(boundry);
+    } else {
+      instance = new LazyTake(this.process, boundry);
+    }
     this.pushProcess(instance);
+
     return this;
   }
 

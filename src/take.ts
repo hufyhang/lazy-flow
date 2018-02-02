@@ -15,3 +15,18 @@ export default class LazyTake extends LazyBase {
     return [new BoundryObject(process.slice(0), this._boundry)];
   }
 }
+
+export class LazyTakeSimple extends LazyBase {
+  constructor(private size: number) {
+    super();
+    this.iteratable = false;
+  }
+
+  value(item: any, buffer: IBuffer, sequence: any[]) {
+    if (this.size >= sequence.length) {
+      return sequence.slice();
+    }
+
+    return sequence.slice(0,this.size);
+  }
+}

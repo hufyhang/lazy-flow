@@ -43,6 +43,12 @@ describe('Lazy Flow', () => {
 
       arr = lazyFlow().range(1, 10).filter(x => x % 2 === 0).map(x => x * 10).take(3).value();
       equal(arr, [20, 40, 60]);
+
+      arr = lazyFlow().range(1, 10).take(5).value();
+      equal(arr, [1, 2, 3, 4, 5]);
+
+      arr = lazyFlow([1, 2, 3, 4, 5]).take(1).value();
+      equal(arr, [1]);
     });
   });
 
@@ -104,5 +110,10 @@ describe('Lazy Flow', () => {
 
       equal(foo(1, 2, 3), [1, 2, 3]);
     });
+  });
+
+  describe('#merge', () => {
+    it('可以交叉合并数组');
+    it('可以交叉合并另一个lazy flow');
   });
 });
