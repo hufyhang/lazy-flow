@@ -111,4 +111,14 @@ describe('Lazy Flow', () => {
       equal(foo(1, 2, 3), [1, 2, 3]);
     });
   });
+
+  describe('#merge', () => {
+    it('应当将另一个数组交叉合并至当前数组', () => {
+      let arr = lazyFlow([1, 2, 3]).merge(['a', 'b']).value();
+      equal(arr, [1, 'a', 2, 'b', 3]);
+
+      arr = lazyFlow([1]).merge(['a', 'b', 'c']).value();
+      equal(arr, [1, 'a', 'b', 'c']);
+    });
+  });
 });

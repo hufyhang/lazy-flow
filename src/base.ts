@@ -1,6 +1,7 @@
 export interface IBuffer {
   accumulator: any;
   currentOutput: any;
+  isLastIteration: boolean;
   overrideLast?: boolean;
 }
 
@@ -20,4 +21,12 @@ export default abstract class LazyBase {
   }
 
   public value(item: any, buffer?: IBuffer, result?: any[]|any): any {};
+}
+
+export class MultiResult {
+  constructor(private results: any[]) {}
+
+  getResults() {
+    return this.results;
+  }
 }

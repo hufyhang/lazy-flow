@@ -1,4 +1,4 @@
-import LazyBase, { IBuffer } from './base';
+import LazyBase, { IBuffer, MultiResult } from './base';
 import LazyRange from './range';
 import LazyMap, { TMapTransformer } from './map';
 import LazyFilter, { TFilterCondition } from './filter';
@@ -10,15 +10,29 @@ import BoundryObject from './boundry_object';
 import LazyDo from './do';
 import LazyOf from './of';
 import LazyFrom from './from';
+import LazyMerge from './merge';
 
 const isArray = (o: any) => Object.prototype.toString.call(o) === '[object Array]';
 
 const securePush = (buffer: any[], item: any, boundry: number|null) => {
-  if (typeof boundry === 'number' && buffer.length + 1 > boundry) {
-    return false;
+  if (item instanceof MultiResult) {
+    const results = item.getResults();
+    for (let o of results) {
+      if (typeof boundry === 'number' && buffer.length + 1 > boundry) {
+        return false;
+      }
+
+      buffer.push(o);
+    }
+
+  } else {
+    if (typeof boundry === 'number' && buffer.length + 1 > boundry) {
+      return false;
+    }
+
+    buffer.push(item);
   }
 
-  buffer.push(item);
 
   return true;
 };
@@ -168,6 +182,12 @@ export class Lazy {
     return this;
   }
 
+  merge(guestArray: any[]) {
+    const instance = new LazyMerge(guestArray);
+    this.pushProcess(instance);
+    return this;
+  }
+
   /**
    * 向Lazy Flow传入新的值并然后流结果。
    * @param value 新的数组或值。
@@ -204,14 +224,20 @@ export class Lazy {
         const buffer: any[] = [];
         const temp: IBuffer = {
           accumulator: undefined,
-          currentOutput: undefined
+          currentOutput: undefined,
+          isLastIteration: false
         };
-        for (let item of result) {
+        for (let index = 0; index !== result.length; ++index) {
+          let item = result[index];
+          if (index === result.length - 1) {
+            temp.isLastIteration = true;
+          }
+
           let passed = true;
           if (typeof boundry === 'number' && buffer.length > boundry) {
             break;
           }
-          for (let proc of (process as LazyBase[])) {
+          for (let proc of process) {
             if (!proc.value(item, temp, result)) {
               passed = false;
               break;
@@ -239,7 +265,16 @@ export class Lazy {
         result = buffer;
 
       } else {
-        result = (process as LazyBase).value(result, { accumulator: undefined, currentOutput: undefined }, result);
+        const buffer: any = [];
+        const res = (process as LazyBase).value(result, {
+          accumulator: undefined,
+          currentOutput: undefined,
+          isLastIteration: false
+        }, result);
+
+        securePush(buffer, res, null);
+
+        result = buffer[0];
       }
     }
 
