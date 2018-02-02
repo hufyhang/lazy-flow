@@ -111,9 +111,4 @@ describe('Lazy Flow', () => {
       equal(foo(1, 2, 3), [1, 2, 3]);
     });
   });
-
-  describe('#merge', () => {
-    it('可以交叉合并数组');
-    it('可以交叉合并另一个lazy flow');
-  });
 });
