@@ -119,6 +119,13 @@ describe('Lazy Flow', () => {
 
       arr = lazyFlow([1]).merge(['a', 'b', 'c']).value();
       equal(arr, [1, 'a', 'b', 'c']);
+
+      arr = lazyFlow([1]).merge(['a', 'b', 'c']).take(3).value();
+      equal(arr, [1, 'a', 'b']);
+
+      const flow$ = lazyFlow([1, 2, 3]);
+      arr = lazyFlow(['a', 'c', 'd']).take(2).merge(flow$).value();
+      equal(arr, ['a', 1, 'c', 2, 3]);
     });
   });
 });

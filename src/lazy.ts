@@ -182,7 +182,11 @@ export class Lazy {
     return this;
   }
 
-  merge(guestArray: any[]) {
+  /**
+   * 将一个数组或者Lazy Flow合并至当前的sequence。
+   * @param guestArray 需要合并的数组或Lazy Flow
+   */
+  merge(guestArray: any[] | Lazy) {
     const instance = new LazyMerge(guestArray);
     this.pushProcess(instance);
     return this;

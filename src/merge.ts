@@ -1,21 +1,26 @@
 import LazyBase, { IBuffer, MultiResult } from './base';
+import { Lazy } from './lazy';
 
 export default class LazyMerge extends LazyBase {
-  constructor(private guest: any[]) {
+  constructor(private guest: any[] | Lazy) {
     super();
     this.iteratable = true;
   }
 
   value(item: any, buffer: IBuffer) {
     let result: any[] = [];
-    if (this.guest.length) {
-      result = [item, this.guest.shift()];
+    if (this.guest instanceof Lazy) {
+      this.guest = this.guest.value();
+    }
+
+    if ((this.guest as any[]).length) {
+      result = [item, (this.guest as any[]).shift()];
     } else {
       result = [item];
     }
 
     if (buffer.isLastIteration) {
-      this.guest.forEach((o) => {
+      (this.guest as any[]).forEach((o: any) => {
         result.push(o);
       });
     }
