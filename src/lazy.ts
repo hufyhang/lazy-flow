@@ -169,13 +169,15 @@ export class Lazy {
   take(boundry: number) {
     let instance;
 
-    if (this.process.length === 0
-        || !(this.process[this.process.length - 1] instanceof BoundryObject)
-        || !this.process[this.process.length - 1].isIteratable()
+    if (this.process.length
+        && this.process[this.process.length - 1] instanceof BoundryObject
+        || isArray(this.process[this.process.length - 1])
+        || (this.process[this.process.length - 1] instanceof LazyBase
+           && this.process[this.process.length - 1].isIteratable())
       ) {
-      instance = new LazyTakeSimple(boundry);
-    } else {
       instance = new LazyTake(this.process, boundry);
+    } else {
+      instance = new LazyTakeSimple(boundry);
     }
     this.pushProcess(instance);
 

@@ -6,7 +6,7 @@ const equal = assert.deepEqual;
 describe('Lazy Flow', () => {
   it('含有初始值时，应该可以通过value直接拿到初始数组', () => {
     equal(lazyFlow([1, 2, 3]).value(), [1, 2, 3]);
-    equal(lazyFlow(100).value(), [100]);
+    equal(lazyFlow([100]).value(), [100]);
   });
 
   describe('#range', () => {
