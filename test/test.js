@@ -9,6 +9,17 @@ describe('Lazy Flow', () => {
     equal(lazyFlow([100]).value(), [100]);
   });
 
+  describe('#value', () => {
+    it('当存在结果回调函数的话，应当对每个结果元素执行该函数', () => {
+      let result = 0;
+      const arr = lazyFlow([1, 2, 3, 4, 5]).value(x => {
+        result += x;
+      });
+
+      assert.equal(result, 15);
+    });
+  });
+
   describe('#range', () => {
     it('生成一段数组区间', () => {
       const arr = lazyFlow().range(1, 10).value();

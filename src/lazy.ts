@@ -210,14 +210,21 @@ export class Lazy {
 
   /**
    * 使Lazy Flow开始执行。
+   * @param processor 对结果数组中每个元素所需执行的回调函数。如果为null，则直接返回结果数组。
    * @param processSequence 所需执行的序列
    * @param boundry 该序列的boundry值，用于对计算进行最小化处理
    * @param result 当前序列的执行结果
    */
-  value(processSequence: any[] = this.process, boundry: number|null = null, result: any = this._result) {
+  value(
+    processor: ((o: any) => any) | null = null,
+    processSequence: any[] = this.process,
+    boundry: number|null = null,
+    result: any = this._result
+  ) {
     for (let process of processSequence) {
       if (process instanceof BoundryObject) {
         result = this.value(
+          null,
           process.sequence,
           process.boundry,
           result
@@ -243,7 +250,7 @@ export class Lazy {
           if (typeof boundry === 'number' && buffer.length > boundry) {
             break;
           }
-          for (let proc of process) {
+          for (let proc of (process as LazyBase[])) {
             if (!proc.value(item, temp, result)) {
               passed = false;
               break;
@@ -282,6 +289,10 @@ export class Lazy {
 
         result = buffer[0];
       }
+    }
+
+    if (typeof processor === 'function') {
+      result.forEach((i: any) => processor(i));
     }
 
     return result;
