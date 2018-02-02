@@ -222,6 +222,11 @@ export class Lazy {
     result: any = this._result
   ) {
     for (let process of processSequence) {
+      // 如果flow中传递的数组空了，终止flow。
+      if (!result.length) {
+        return;
+      }
+
       if (process instanceof BoundryObject) {
         result = this.value(
           null,
@@ -251,6 +256,11 @@ export class Lazy {
             break;
           }
           for (let proc of (process as LazyBase[])) {
+            // 如果flow中传递的数组空了，终止flow。
+            if (!result.length) {
+              return;
+            }
+
             if (!proc.value(item, temp, result)) {
               passed = false;
               break;

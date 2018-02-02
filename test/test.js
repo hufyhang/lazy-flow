@@ -9,6 +9,12 @@ describe('Lazy Flow', () => {
     equal(lazyFlow([100]).value(), [100]);
   });
 
+  it('当flow中传递的数组空了时，应当终止flow', () => {
+    let counter = 0;
+    const arr = lazyFlow().range(1, 10).filter(x => x > 10).do(() => counter += 1).map(x => x).value();
+    assert.equal(counter, 0);
+  });
+
   describe('#value', () => {
     it('当存在结果回调函数的话，应当对每个结果元素执行该函数', () => {
       let result = 0;
