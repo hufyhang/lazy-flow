@@ -4,6 +4,18 @@ const assert = require('assert');
 const equal = assert.deepEqual;
 
 describe('Lazy Flow', () => {
+  it('应当为纯函数', () => {
+    const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    lazyFlow(arr).map(x => x * 10).filter(x => x > 50).merge([1, 2, 3]).value();
+    equal(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+    lazyFlow().of(arr).map(x => x * 10).filter(x => x > 50).merge([1, 2, 3]).value();
+    equal(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+    lazyFlow().of(arr).map(x => x * 10).filter(x => x > 50).take(10).merge([1, 2, 3]).value();
+    equal(arr, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  });
+
   it('含有初始值时，应该可以通过value直接拿到初始数组', () => {
     equal(lazyFlow([1, 2, 3]).value(), [1, 2, 3]);
     equal(lazyFlow([100]).value(), [100]);
@@ -50,6 +62,9 @@ describe('Lazy Flow', () => {
 
       arr = lazyFlow().range(1, 10).filter(x => x % 2 === 0).map(x => x * 10).value();
       equal(arr, [20, 40, 60, 80, 100]);
+
+      arr = lazyFlow().range(1, 10).filter(x => x % 2 === 0).filter(x => x >= 5).take(2).map(x => x * 10).value();
+      equal(arr, [60, 80]);
     });
   });
 
@@ -65,6 +80,9 @@ describe('Lazy Flow', () => {
       equal(arr, [1, 2, 3, 4, 5]);
 
       arr = lazyFlow([1, 2, 3, 4, 5]).take(1).value();
+      equal(arr, [1]);
+
+      arr = lazyFlow([1, 2, 3, 4, 5]).merge([1, 2, 3, 4, 5]).take(2).map(x => x).take(1).value();
       equal(arr, [1]);
     });
   });
