@@ -12,6 +12,7 @@ import LazyOf from './of';
 import LazyFrom from './from';
 import LazyMerge from './merge';
 import LazySome from './some';
+import LazyEvery from './every';
 
 const isArray = (o: any) => Object.prototype.toString.call(o) === '[object Array]';
 
@@ -189,13 +190,22 @@ export class Lazy {
     return this;
   }
 
-
   /**
    * 判断数组中是否至少有一个元素符合条件。
    * @param condition 条件函数
    */
   some(condition: (o: any) => boolean) {
     const instance = new LazySome(condition);
+    this.pushProcess(instance);
+    return this;
+  }
+
+  /**
+   * 判断数组中是否全部元素均满足条件。
+   * @param condition 条件函数
+   */
+  every(condition: (o: any) => boolean) {
+    const instance = new LazyEvery(condition);
     this.pushProcess(instance);
     return this;
   }

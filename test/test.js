@@ -179,4 +179,17 @@ describe('Lazy Flow', () => {
       assert.equal(temp, 0);
     })
   });
+
+  describe('#every', () => {
+    it('当全部元素满足条件时，继续flow', () => {
+      const arr = lazyFlow([1, 2, 3]).map(x => x * 10).every(x => x >= 10).reduce((accu, x) => accu + x, 0).value();
+      assert.equal(arr, 60);
+    });
+
+    it('当有元素不满足条件时，终止flow', () => {
+      let temp = 0;
+      const arr = lazyFlow([1, 2, 3]).map(x => x * 10).every(x => x < 25).do(x => temp += x).value();
+      assert.equal(temp, 0);
+    });
+  });
 });
