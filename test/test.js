@@ -166,4 +166,17 @@ describe('Lazy Flow', () => {
       equal(arr, ['a', 1, 'c', 2, 3]);
     });
   });
+
+  describe('#some', () => {
+    it('应当有任意元素满足条件时继续flow', () => {
+      const arr = lazyFlow([1, 2, 3]).some(x => x > 2).reduce((accu, x) => accu + x, 0).value();
+      assert.equal(arr, 6);
+    });
+
+    it('应当在无元素满足添加时终止flow', () => {
+      let temp = 0;
+      const arr = lazyFlow([1, 2, 3]).some(x => x > 5).do(x => temp += x).value();
+      assert.equal(temp, 0);
+    })
+  });
 });

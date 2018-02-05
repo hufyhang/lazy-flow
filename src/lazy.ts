@@ -11,6 +11,7 @@ import LazyDo from './do';
 import LazyOf from './of';
 import LazyFrom from './from';
 import LazyMerge from './merge';
+import LazySome from './some';
 
 const isArray = (o: any) => Object.prototype.toString.call(o) === '[object Array]';
 
@@ -188,6 +189,17 @@ export class Lazy {
     return this;
   }
 
+
+  /**
+   * 判断数组中是否至少有一个元素符合条件。
+   * @param condition 条件函数
+   */
+  some(condition: (o: any) => boolean) {
+    const instance = new LazySome(condition);
+    this.pushProcess(instance);
+    return this;
+  }
+
   /**
    * 将一个数组或者Lazy Flow合并至当前的sequence。
    * @param guestArray 需要合并的数组或Lazy Flow
@@ -247,7 +259,9 @@ export class Lazy {
         const temp: IBuffer = {
           accumulator: undefined,
           currentOutput: undefined,
-          isLastIteration: false
+          isLastIteration: false,
+          tempHandlerOutput: [],
+          terminateFlow: false
         };
         for (let index = 0; index !== result.length; ++index) {
           let item = result[index];
@@ -265,7 +279,13 @@ export class Lazy {
               return;
             }
 
-            if (!proc.value(item, temp, result)) {
+            let needBreak = !proc.value(item, temp, result);
+            // 当遇到终止flag时终止flow的执行。
+            if (temp.terminateFlow) {
+              return;
+            }
+
+            if (needBreak) {
               passed = false;
               break;
             }
@@ -293,11 +313,18 @@ export class Lazy {
 
       } else {
         const buffer: any = [];
-        const res = (process as LazyBase).value(result, {
+        const tempBuffer: IBuffer = {
           accumulator: undefined,
           currentOutput: undefined,
-          isLastIteration: false
-        }, result);
+          isLastIteration: false,
+          terminateFlow: false,
+          tempHandlerOutput: []
+        };
+        const res = (process as LazyBase).value(result, tempBuffer, result);
+
+        if (tempBuffer.terminateFlow) {
+          return;
+        }
 
         securePush(buffer, res, null);
 

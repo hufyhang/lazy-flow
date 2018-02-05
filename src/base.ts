@@ -2,6 +2,8 @@ export interface IBuffer {
   accumulator: any;
   currentOutput: any;
   isLastIteration: boolean;
+  tempHandlerOutput: any[];
+  terminateFlow: boolean;
   overrideLast?: boolean;
 }
 
