@@ -84,6 +84,9 @@ describe('Lazy Flow', () => {
 
       arr = lazyFlow([1, 2, 3, 4, 5]).merge([1, 2, 3, 4, 5]).take(2).map(x => x).take(1).value();
       equal(arr, [1]);
+
+      arr = lazyFlow([1, 2, 3, 4, 5]).merge([1, 2, 3, 4, 5]).take(2).take(1).value();
+      equal(arr, [1]);
     });
   });
 

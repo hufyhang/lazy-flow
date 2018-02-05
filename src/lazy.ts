@@ -175,6 +175,10 @@ export class Lazy {
         || (this.process[this.process.length - 1] instanceof LazyBase
            && this.process[this.process.length - 1].isIteratable())
       ) {
+      if (this.process[this.process.length - 1] instanceof BoundryObject) {
+        this.pushProcess(new LazyMap(x => x));
+      }
+
       instance = new LazyTake(this.process, boundry);
     } else {
       instance = new LazyTakeSimple(boundry);
