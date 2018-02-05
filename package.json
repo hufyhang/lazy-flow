@@ -1,7 +1,6 @@
 {
-  "name": "lazy",
+  "name": "lazy-flow",
   "version": "1.0.0",
-  "main": "index.js",
   "license": "MIT",
   "scripts": {
     "build": "yarn tsc src/lazy.ts --outDir dist --target es5",
