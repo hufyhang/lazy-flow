@@ -350,7 +350,7 @@ export class Lazy {
   }
 }
 
-export default function(initialValue?: any[]) {
+export default function(initialValue?: any|any[]) {
   initialValue = isArray(initialValue) ? initialValue : [initialValue];
   return new Lazy(initialValue);
 };
