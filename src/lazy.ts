@@ -1,4 +1,4 @@
-import LazyBase, { IBuffer, MultiResult } from './base';
+import LazyBase, { IBuffer, MultiResult, LazyBoundry } from './base';
 import LazyRange from './range';
 import LazyMap, { TMapTransformer } from './map';
 import LazyFilter, { TFilterCondition } from './filter';
@@ -50,7 +50,7 @@ export class Lazy {
   }
 
   private pushProcess(process: LazyBase) {
-    if (process instanceof LazyTake) {
+    if (process instanceof LazyBoundry) {
       this.process = process.getSequence(this.process);
       this.prevIteratable = false;
     } else if (process.isIteratable()) {

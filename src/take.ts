@@ -1,7 +1,7 @@
-import LazyBase, { IBuffer } from './base';
+import LazyBase, { IBuffer, LazyBoundry } from './base';
 import BoundryObject from './boundry_object';
 
-export default class LazyTake extends LazyBase {
+export default class LazyTake extends LazyBoundry {
   private _boundry: number;
 
   constructor(process: any[], boundry: number) {

@@ -1,3 +1,5 @@
+import BoundryObject from "./boundry_object";
+
 export interface IBuffer {
   accumulator: any;
   currentOutput: any;
@@ -5,6 +7,10 @@ export interface IBuffer {
   tempHandlerOutput: any[];
   terminateFlow: boolean;
   overrideLast?: boolean;
+}
+
+interface ILazyBoundry {
+  getSequence(o: any[]): BoundryObject[];
 }
 
 export default abstract class LazyBase {
@@ -23,6 +29,10 @@ export default abstract class LazyBase {
   }
 
   public value(item: any, buffer?: IBuffer, result?: any[]|any): any {};
+}
+
+export abstract class LazyBoundry extends LazyBase implements ILazyBoundry {
+  public getSequence(o: any[]) { return ([] as BoundryObject[]); };
 }
 
 export class MultiResult {
